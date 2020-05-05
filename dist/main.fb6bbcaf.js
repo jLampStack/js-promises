@@ -118,7 +118,13 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"js/main.js":[function(require,module,exports) {
-// TRAVERSY
+/**
+ *  PROMISES
+ * 
+ *  1) Part 1: new Promise( (resolve, reject) => {} )
+ *  2) Part 2: Promise.all([])
+ *  3) Part 3: fetch()
+ */
 var posts = [{
   title: 'Post One',
   body: 'This is post one '
@@ -128,59 +134,145 @@ var posts = [{
 }];
 
 function getPosts() {
+  var output = "";
   setTimeout(function () {
-    var output = "";
     posts.forEach(function (post) {
-      output += "<li>\n           <span>\n            ".concat(post.title, "\n           </span><BR>\n           ").concat(post.body, "<BR>\n          </li>");
-    });
-    console.log(output);
+      output += "<li>\n          <span>\n            ".concat(post.title, "\n          </span><BR>\n          ").concat(post.body, "<BR>\n          </li>");
+    }); // console.log(output);
+
     document.querySelector('#posts').innerHTML = output;
   }, 1000);
 }
+/**
+ *  PART 1: Refactor from callback to promise
+ * 
+ *  1) Remove callback param from create post e.g.) createPost( post, cb )
+ *  2) return a promise 
+ *  3) Nest setTimeout in promise
+ */
 
-function createPost(post, cb) {
-  setTimeout(function () {
-    posts.push(post);
-    cb();
-  }, 2000);
+
+function createPost(post) {
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+      posts.push(post);
+      var error = true;
+
+      if (!error) {
+        resolve();
+      } else {
+        // catch() is chained after .then when using createPost()
+        // scroll down to see
+        reject('Error: something went wrong');
+      } // cb();
+
+    }, 2000);
+  });
 }
 
 getPosts();
 /**
- *  Creates / Adds post to posts array
+ *  Refactor callback by removing the callback and chaining .then to the post which mimics a callback. .then is used with promises
  * 
  *  @param1 - Post Object
- *  @param2 - Callback
+ * 
+ * @process - .then
+ *  
  */
+// Code before refactored using a callback
+// createPost({ title: 'Post Three', body: 'This is post three' }, getPosts );
+// Refactored code using .then
 
 createPost({
   title: 'Post Three',
   body: 'This is post three'
-}, getPosts);
+}) // mimics a callback
+.then(getPosts) // mimics try catch 
+// allows us to use a nicer, cleaner custom err msg 
+// scroll up to view err msg we defined using reject()
+// catch uses a cb function, err is an arbitrary name
+// Posts 4 - 9 use variations, check to see other approaches
+// All are acceptable approaches
+.catch(function (err) {
+  return console.log(err);
+});
 createPost({
   title: 'Post Four',
   body: 'This is post four'
-}, getPosts);
+}).then(getPosts).catch(function (error) {
+  return console.log(error);
+});
 createPost({
   title: 'Post Five',
   body: 'This is post five'
-}, getPosts);
+}).then(getPosts).catch(function (e) {
+  return console.log(e);
+});
 createPost({
   title: 'Post Six',
   body: 'This is post six'
-}, getPosts);
+}).then(getPosts).catch(function (err) {
+  return console.log(err + ' ... some random text');
+});
 createPost({
   title: 'Post Seven',
   body: 'This is post seven'
-}, getPosts);
+}).then(getPosts).catch(function (e) {
+  return console.error(Error(e));
+});
 createPost({
   title: 'Post Eight',
   body: 'This is post eight'
-}, getPosts);
+}).then(getPosts).catch(function (e) {
+  return console.error(Error(e.message));
+});
 createPost({
-  title: 'Post Nine',
-  body: 'This is post nine'
-}, getPosts);
+  title: 'Post Eight',
+  body: 'This is post eight'
+}).then(getPosts).catch(function (e) {
+  return console.error(Error(e.name));
+});
+/**
+ *  Read more about error handling:
+ * 
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+ * 
+ */
+
+/**
+ *  PART 2: Promise.all( [promise1, promise2, etc.] ) 
+ * 
+ *  Accepts an array
+ */
+
+var promise1 = Promise.resolve('Hello World');
+var promise2 = 12345;
+var promise3 = new Promise(function (resolve, reject) {
+  return setTimeout(resolve, 3250, 'Adios Amigo!');
+});
+/**
+ *  PART 4: fetch()
+ * 
+ *  res is common shorthand for response
+ * 
+ *  IMPORTANT: fetch alone only returns info about the function that is used
+ *  to format JSON. It still works but doesn't return the info we're after
+ *  To parse it to be readable we must chani .then()
+ * 
+ */
+
+var promise4 = fetch('https://jsonplaceholder.typicode.com/users').then(function (res) {
+  return res.json();
+}); // Takes however long the longest promise is to return all the values which is 3250
+
+Promise.all([promise1, promise2, promise3, promise4]).then(function (values) {
+  return console.log(values);
+});
+/**
+ *  PART 4: fetch
+ * 
+ *  Need to chain 2 fetches in a row to use fetch
+ */
 },{}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -209,7 +301,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65260" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49768" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

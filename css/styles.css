@@ -38,3 +38,16 @@ li > span {
   font-weight: 700;
   text-transform: uppercase;
 }
+
+
+.important {
+  margin-bottom: 0;
+  color: red;
+  padding: 16px 20px 16px 20px;
+  background: none;
+  border: 2px solid rgb(248, 96, 96);
+}
+
+.important > span {
+  font-weight: 700;
+}
